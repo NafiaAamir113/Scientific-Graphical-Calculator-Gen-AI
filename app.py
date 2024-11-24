@@ -1,69 +1,58 @@
-!pip install matplotlib
-import streamlit as st
+# scientific_calculator.py
+
 import numpy as np
+import sympy as sp
 import matplotlib.pyplot as plt
+import streamlit as st
 
-# Title of the app
-st.title("Graphical Scientific Calculator")
+# Streamlit Interface
+st.title("Scientific Graphical Calculator")
 
-# Dropdown menu for selecting a mathematical operation
+# Mathematical Functions
+st.header("Mathematical Functions")
+x = sp.symbols('x')
+
+# Select function
 operation = st.selectbox(
-    "Select an operation:",
-    [
-        "Sine (sin)",
-        "Cosine (cos)",
-        "Tangent (tan)",
-        "Exponential (exp)",
-        "Logarithm (log)",
-        "Square Root (sqrt)",
-        "Square (x^2)",
-    ]
+    "Select Operation:",
+    ["Differentiation", "Integration", "Solve Equation", "Plot Function"]
 )
 
-# Input fields for the range of x-values
-min_x = st.number_input("Enter minimum x value:", value=-10.0, format="%.2f")
-max_x = st.number_input("Enter maximum x value:", value=10.0, format="%.2f")
+if operation == "Differentiation":
+    func = st.text_input("Enter function (e.g., x**2 + 3*x + 2):")
+    if func:
+        diff_func = sp.diff(func, x)
+        st.write(f"Derivative of {func} is:")
+        st.latex(sp.latex(diff_func))
 
-# Plot button with green color
-plot_button = st.button("Plot", key="plot_button")
+elif operation == "Integration":
+    func = st.text_input("Enter function (e.g., x**2 + 3*x + 2):")
+    if func:
+        integral_func = sp.integrate(func, x)
+        st.write(f"Integral of {func} is:")
+        st.latex(sp.latex(integral_func))
 
-if plot_button:
-    # Check if minimum x is less than maximum x
-    if min_x >= max_x:
-        st.error("Minimum x value should be less than maximum x value.")
-    else:
-        # Generate x values
-        x = np.linspace(min_x, max_x, 500)
+elif operation == "Solve Equation":
+    eq = st.text_input("Enter equation to solve (e.g., x**2 - 4):")
+    if eq:
+        solutions = sp.solve(eq, x)
+        st.write(f"Solutions to {eq} are:")
+        st.write(solutions)
 
-        # Compute y values based on the selected operation
-        try:
-            if operation == "Sine (sin)":
-                y = np.sin(x)
-            elif operation == "Cosine (cos)":
-                y = np.cos(x)
-            elif operation == "Tangent (tan)":
-                y = np.tan(x)
-            elif operation == "Exponential (exp)":
-                y = np.exp(x)
-            elif operation == "Logarithm (log)":
-                y = np.log(x)
-            elif operation == "Square Root (sqrt)":
-                y = np.sqrt(np.maximum(x, 0))  # Prevent negative values
-            elif operation == "Square (x^2)":
-                y = x**2
+elif operation == "Plot Function":
+    func = st.text_input("Enter function to plot (e.g., x**2 - 4):")
+    x_min = st.number_input("Enter minimum value of x:", value=-10)
+    x_max = st.number_input("Enter maximum value of x:", value=10)
 
-            # Plotting
-            fig, ax = plt.subplots()
-            ax.plot(x, y, label=f"y = {operation}")
-            ax.axhline(0, color="black", linewidth=0.5, linestyle="--")
-            ax.axvline(0, color="black", linewidth=0.5, linestyle="--")
-            ax.legend()
-            ax.grid(True)
-            ax.set_xlabel("x")
-            ax.set_ylabel("y")
-            ax.set_title(f"Graph of {operation}")
-            st.pyplot(fig)
-
-        except Exception as e:
-            st.error(f"An error occurred: {e}")
-
+    if func:
+        x_vals = np.linspace(x_min, x_max, 500)
+        y_vals = [sp.sympify(func).subs(x, val) for val in x_vals]
+        plt.figure(figsize=(8, 6))
+        plt.plot(x_vals, y_vals, label=f"${sp.latex(sp.sympify(func))}$")
+        plt.title("Graph of the Function")
+        plt.xlabel("x")
+        plt.ylabel("y")
+        plt.axhline(0, color='black', linewidth=0.5, linestyle="--")
+        plt.axvline(0, color='black', linewidth=0.5, linestyle="--")
+        plt.legend()
+        st.pyplot(plt)
