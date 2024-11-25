@@ -1,69 +1,54 @@
-import math
+import streamlit as st
+import numpy as np
+import matplotlib.pyplot as plt
 
-def scientific_calculator():
-    print("Welcome to the Scientific Calculator!")
-    print("Select operation:")
-    print("1. Addition (+)")
-    print("2. Subtraction (-)")
-    print("3. Multiplication (*)")
-    print("4. Division (/)")
-    print("5. Square Root (√)")
-    print("6. Power (^)")
-    print("7. Sine (sin)")
-    print("8. Cosine (cos)")
-    print("9. Tangent (tan)")
-    print("10. Logarithm (log)")
+# App title
+st.title("Scientific Graphical Calculator")
 
-    choice = input("Enter choice (1-10): ")
+# Sidebar for selecting the mathematical function
+st.sidebar.header("Calculator Options")
+operation = st.sidebar.selectbox(
+    "Select an operation",
+    ("Sin", "Cos", "Tan", "Log", "Square Root")
+)
 
-    if choice in ['1', '2', '3', '4']:
-        num1 = float(input("Enter first number: "))
-        num2 = float(input("Enter second number: "))
+# Input fields for range of x values
+st.sidebar.subheader("Set Range for x")
+min_x = st.sidebar.number_input("Enter minimum x value", value=0)
+max_x = st.sidebar.number_input("Enter maximum x value", value=10)
 
-        if choice == '1':
-            print(f"The result is: {num1 + num2}")
-        elif choice == '2':
-            print(f"The result is: {num1 - num2}")
-        elif choice == '3':
-            print(f"The result is: {num1 * num2}")
-        elif choice == '4':
-            if num2 != 0:
-                print(f"The result is: {num1 / num2}")
-            else:
-                print("Error: Division by zero is not allowed.")
+# Ensure valid range
+if min_x >= max_x:
+    st.error("Minimum x value must be less than maximum x value.")
 
-    elif choice == '5':
-        num = float(input("Enter the number: "))
-        if num >= 0:
-            print(f"The result is: {math.sqrt(num)}")
-        else:
-            print("Error: Cannot calculate the square root of a negative number.")
+# Plot button
+if st.button("Plot", key="plot_button", help="Click to generate the plot"):
+    x = np.linspace(min_x, max_x, 500)  # Generate x values
+    
+    # Calculate the selected mathematical function
+    if operation == "Sin":
+        y = np.sin(x)
+    elif operation == "Cos":
+        y = np.cos(x)
+    elif operation == "Tan":
+        y = np.tan(x)
+    elif operation == "Log":
+        y = np.log(x + 1e-9)  # Add a small constant to avoid log(0)
+    elif operation == "Square Root":
+        y = np.sqrt(np.abs(x))  # Handle negative x values gracefully
 
-    elif choice == '6':
-        base = float(input("Enter the base: "))
-        exp = float(input("Enter the exponent: "))
-        print(f"The result is: {math.pow(base, exp)}")
+    # Plot the function
+    plt.figure(figsize=(10, 6))
+    plt.plot(x, y, label=f"{operation}(x)", color="green")
+    plt.title(f"{operation} Plot")
+    plt.xlabel("x")
+    plt.ylabel(f"{operation}(x)")
+    plt.grid(True)
+    plt.legend()
+    
+    # Display the plot
+    st.pyplot(plt)
 
-    elif choice in ['7', '8', '9', '10']:
-        num = float(input("Enter the number (in degrees): "))
-        rad = math.radians(num)
-
-        if choice == '7':
-            print(f"The result is: {math.sin(rad)}")
-        elif choice == '8':
-            print(f"The result is: {math.cos(rad)}")
-        elif choice == '9':
-            print(f"The result is: {math.tan(rad)}")
-        elif choice == '10':
-            if num > 0:
-                print(f"The result is: {math.log(num)}")
-            else:
-                print("Error: Logarithm undefined for non-positive numbers.")
-
-    else:
-        print("Invalid input. Please select a valid operation.")
-
-# Run the scientific calculator
-scientific_calculator()
-
-
+# Footer
+st.markdown("---")
+st.markdown("Created with ❤️ using Streamlit")
