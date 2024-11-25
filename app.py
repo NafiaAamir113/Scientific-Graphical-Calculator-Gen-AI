@@ -1,78 +1,69 @@
-# scientific_calculator.py
+import math
 
-import numpy as np
-import sympy as sp
-import matplotlib.pyplot as plt
-import streamlit as st
+def scientific_calculator():
+    print("Welcome to the Scientific Calculator!")
+    print("Select operation:")
+    print("1. Addition (+)")
+    print("2. Subtraction (-)")
+    print("3. Multiplication (*)")
+    print("4. Division (/)")
+    print("5. Square Root (√)")
+    print("6. Power (^)")
+    print("7. Sine (sin)")
+    print("8. Cosine (cos)")
+    print("9. Tangent (tan)")
+    print("10. Logarithm (log)")
 
-# Streamlit Interface
-st.title("Scientific Graphical Calculator")
+    choice = input("Enter choice (1-10): ")
 
-# Sidebar for Navigation
-st.sidebar.title("Calculator Options")
-operation = st.sidebar.selectbox(
-    "Select Operation:",
-    ["Differentiation", "Integration", "Solve Equation", "Plot Function"]
-)
+    if choice in ['1', '2', '3', '4']:
+        num1 = float(input("Enter first number: "))
+        num2 = float(input("Enter second number: "))
 
-# Define the variable for symbolic math
-x = sp.symbols('x')
+        if choice == '1':
+            print(f"The result is: {num1 + num2}")
+        elif choice == '2':
+            print(f"The result is: {num1 - num2}")
+        elif choice == '3':
+            print(f"The result is: {num1 * num2}")
+        elif choice == '4':
+            if num2 != 0:
+                print(f"The result is: {num1 / num2}")
+            else:
+                print("Error: Division by zero is not allowed.")
 
-if operation == "Differentiation":
-    st.header("Differentiation")
-    func = st.text_input("Enter a function of x (e.g., x**2 + 3*x + 2):")
-    if func:
-        try:
-            diff_func = sp.diff(func, x)
-            st.write(f"Derivative of `{func}`:")
-            st.latex(sp.latex(diff_func))
-        except Exception as e:
-            st.error(f"Invalid input. Please ensure the function is correctly formatted. Error: {e}")
+    elif choice == '5':
+        num = float(input("Enter the number: "))
+        if num >= 0:
+            print(f"The result is: {math.sqrt(num)}")
+        else:
+            print("Error: Cannot calculate the square root of a negative number.")
 
-elif operation == "Integration":
-    st.header("Integration")
-    func = st.text_input("Enter a function of x (e.g., x**2 + 3*x + 2):")
-    if func:
-        try:
-            integral_func = sp.integrate(func, x)
-            st.write(f"Integral of `{func}`:")
-            st.latex(sp.latex(integral_func))
-        except Exception as e:
-            st.error(f"Invalid input. Please ensure the function is correctly formatted. Error: {e}")
+    elif choice == '6':
+        base = float(input("Enter the base: "))
+        exp = float(input("Enter the exponent: "))
+        print(f"The result is: {math.pow(base, exp)}")
 
-elif operation == "Solve Equation":
-    st.header("Solve Equation")
-    eq = st.text_input("Enter an equation to solve (e.g., x**2 - 4):")
-    if eq:
-        try:
-            solutions = sp.solve(eq, x)
-            st.write(f"Solutions to `{eq}`:")
-            st.write(solutions)
-        except Exception as e:
-            st.error(f"Invalid input. Please ensure the equation is correctly formatted. Error: {e}")
+    elif choice in ['7', '8', '9', '10']:
+        num = float(input("Enter the number (in degrees): "))
+        rad = math.radians(num)
 
-elif operation == "Plot Function":
-    st.header("Plot Function")
-    func = st.text_input("Enter a function of x to plot (e.g., x**2 - 4):")
-    x_min = st.number_input("Enter minimum value of x:", value=-10.0, step=1.0)
-    x_max = st.number_input("Enter maximum value of x:", value=10.0, step=1.0)
+        if choice == '7':
+            print(f"The result is: {math.sin(rad)}")
+        elif choice == '8':
+            print(f"The result is: {math.cos(rad)}")
+        elif choice == '9':
+            print(f"The result is: {math.tan(rad)}")
+        elif choice == '10':
+            if num > 0:
+                print(f"The result is: {math.log(num)}")
+            else:
+                print("Error: Logarithm undefined for non-positive numbers.")
 
-    if func:
-        try:
-            x_vals = np.linspace(x_min, x_max, 500)
-            func_expr = sp.lambdify(x, sp.sympify(func), modules=["numpy"])
-            y_vals = func_expr(x_vals)
+    else:
+        print("Invalid input. Please select a valid operation.")
 
-            # Plotting
-            plt.figure(figsize=(8, 6))
-            plt.plot(x_vals, y_vals, label=f"${sp.latex(sp.sympify(func))}$")
-            plt.title("Graph of the Function")
-            plt.xlabel("x")
-            plt.ylabel("y")
-            plt.axhline(0, color='black', linewidth=0.5, linestyle="--")
-            plt.axvline(0, color='black', linewidth=0.5, linestyle="--")
-            plt.legend()
-            st.pyplot(plt)
-        except Exception as e:
-            st.error(f"Invalid input or range. Please ensure the function is correctly formatted. Error: {e}")
+# Run the scientific calculator
+scientific_calculator()
+
 
